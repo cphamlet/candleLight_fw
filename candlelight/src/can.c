@@ -167,7 +167,7 @@ bool can_receive(can_data_t *hcan, struct gs_host_frame *rx_frame)
 static CAN_TxMailBox_TypeDef *can_find_free_mailbox(can_data_t *hcan)
 {
 	CAN_TypeDef *can = hcan->instance;
-
+//LOOK AT TSR, tsr could be going to 0. 
 	uint32_t tsr = can->TSR;
 	if ( tsr & CAN_TSR_TME0 ) {
 		return &can->sTxMailBox[0];

@@ -46,6 +46,7 @@ void HAL_MspInit(void);
 void SystemClock_Config(void);
 static bool send_to_host_or_enqueue(struct gs_host_frame *frame);
 static void send_to_host();
+static void sleep();
 
 can_data_t hCAN;
 USBD_HandleTypeDef hUSB;
@@ -74,7 +75,7 @@ int main(void)
 #else
 	led_init(&hLED, LED1_GPIO_Port, LED1_Pin, false, LED2_GPIO_Port, LED2_Pin, false);
 #endif
-	led_set_mode(&hLED, led_mode_off);
+	//led_set_mode(&hLED, led_mode_normal);
 	timer_init();
 
 	can_init(&hCAN, CAN);
@@ -95,21 +96,46 @@ int main(void)
 	USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
 	USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
 	USBD_Start(&hUSB);
+	led_set_mode(&hLED, led_mode_normal);
+	
+	//sleep(1);
+
+	//led_set_mode(&hLED, led_mode_blue);	
 
 #ifdef CAN_S_GPIO_Port
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
 #endif
 
+struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
+		frame->can_id = 0;
+		frame->can_dlc = 8;
+		for(int ty = 0; ty<8; ty++ ){
+			frame->data[ty] = 0x00;
+		}
+
 	while (1) {
-		struct gs_host_frame *frame = queue_pop_front(q_from_host);
+		
+	//	struct gs_host_frame *frame = queue_pop_front(q_from_host);
+	    
+		led_set_mode(&hLED, led_mode_blue);	
+		sleep(1);
+		led_set_mode(&hLED, led_mode_off);
+		sleep(1);
+
 		if (frame != 0) { // send can message from host
+		// led_set_mode(&hLED, led_mode_normal);	
 			if (can_send(&hCAN, frame)) {
 			        // Echo sent frame back to host
 			        frame->timestamp_us = timer_get();
 				send_to_host_or_enqueue(frame);
 				
-				led_indicate_trx(&hLED, led_2);
+				//led_indicate_trx(&hLED, led_2);
+
+				led_set_mode(&hLED, led_mode_green);
+				sleep(1);	
 			} else {
+				led_set_mode(&hLED, led_mode_normal);
+				sleep(1);
 				queue_push_front(q_from_host, frame); // retry later
 			}
 		}
@@ -131,7 +157,7 @@ int main(void)
 
 				send_to_host_or_enqueue(frame);
 
-				led_indicate_trx(&hLED, led_1);
+				// led_indicate_trx(&hLED, led_1);
 
 			} else {
 				queue_push_back(q_frame_pool, frame);
@@ -239,6 +265,16 @@ void send_to_host()
 	        queue_push_back(q_frame_pool, frame);
 	} else {
 	        queue_push_front(q_to_host, frame);
+	}
+}
+
+
+sleep(int ticks){
+	for(int counter = 0; counter <= ticks; counter++){
+	double h = 0;
+	for(double i =0 ; i<100000; i++){
+		h = i*i*i;
+	}
 	}
 }
 
