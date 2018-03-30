@@ -80,7 +80,8 @@ int main(void)
 
 	can_init(&hCAN, CAN);
 	can_disable(&hCAN);
-
+	can_enable(&hCAN, false, false, false);
+	// sleep(5);
 
 	q_frame_pool = queue_create(CAN_QUEUE_SIZE);
 	q_from_host  = queue_create(CAN_QUEUE_SIZE);
@@ -91,11 +92,11 @@ int main(void)
 		queue_push_back(q_frame_pool, &msgbuf[i]);
 	}
 
-	USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
-	USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
-	USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
-	USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
-	USBD_Start(&hUSB);
+	// USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
+	// USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
+	// USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
+	// USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
+	// USBD_Start(&hUSB);
 	led_set_mode(&hLED, led_mode_normal);
 	
 	//sleep(1);
@@ -140,9 +141,9 @@ struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
 			}
 		}
 
-		if (USBD_GS_CAN_TxReady(&hUSB)) {
-			send_to_host();
-		}
+		// if (USBD_GS_CAN_TxReady(&hUSB)) {
+		// 	send_to_host();
+		// }
 
 		if (can_is_rx_pending(&hCAN)) {
 			struct gs_host_frame *frame = queue_pop_front(q_frame_pool);
@@ -182,9 +183,9 @@ struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
 
 		led_update(&hLED);
 
-		if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
-			dfu_run_bootloader();
-		}
+		// if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
+		// 	dfu_run_bootloader();
+		// }
 
 	}
 }
