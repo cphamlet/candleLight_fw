@@ -46,7 +46,7 @@ void HAL_MspInit(void);
 void SystemClock_Config(void);
 static bool send_to_host_or_enqueue(struct gs_host_frame *frame);
 static void send_to_host();
-static void sleep();
+static void sleep(double ticks);
 
 can_data_t hCAN;
 USBD_HandleTypeDef hUSB;
@@ -92,11 +92,11 @@ int main(void)
 		queue_push_back(q_frame_pool, &msgbuf[i]);
 	}
 
-	// USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
-	// USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
-	// USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
-	// USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
-	// USBD_Start(&hUSB);
+	USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
+	USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
+	USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
+	USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
+	USBD_Start(&hUSB);
 	led_set_mode(&hLED, led_mode_normal);
 	
 	//sleep(1);
@@ -107,24 +107,23 @@ int main(void)
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
 #endif
 
-struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
-		frame->can_id = 0;
-		frame->can_dlc = 8;
-		for(int ty = 0; ty<8; ty++ ){
-			frame->data[ty] = 0x00;
-		}
+// struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
+// 		frame->can_id = 0;
+// 		frame->can_dlc = 8;
+// 		for(int ty = 0; ty<8; ty++ ){
+// 			frame->data[ty] = 0x00;
+// 		}
 
 	while (1) {
 		
-	//	struct gs_host_frame *frame = queue_pop_front(q_from_host);
+		struct gs_host_frame *frame = queue_pop_front(q_from_host);
 	    
 		led_set_mode(&hLED, led_mode_blue);	
 		sleep(1);
 		led_set_mode(&hLED, led_mode_off);
 		sleep(1);
 
-		if (frame != 0) { // send can message from host
-		// led_set_mode(&hLED, led_mode_normal);	
+		if (frame != 0) { // send can message from host	
 			if (can_send(&hCAN, frame)) {
 			        // Echo sent frame back to host
 			        frame->timestamp_us = timer_get();
@@ -146,6 +145,9 @@ struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
 		// }
 
 		if (can_is_rx_pending(&hCAN)) {
+			/*Added cphamlet*/
+			// led_set_mode(&hLED, led_mode_normal);
+			// sleep(50);
 			struct gs_host_frame *frame = queue_pop_front(q_frame_pool);
 			if ((frame != 0) && can_receive(&hCAN, frame)) {
              			received_count++;
@@ -168,6 +170,10 @@ struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
 
 		uint32_t can_err = can_get_error_status(&hCAN);
 		if (can_err != last_can_error_status) {
+			/*Added cphamlet*/
+			led_set_mode(&hLED, led_mode_normal);
+			sleep(10);
+
 			struct gs_host_frame *frame = queue_pop_front(q_frame_pool);
 			if (frame != 0) {
 				frame->timestamp_us = timer_get();
@@ -270,12 +276,10 @@ void send_to_host()
 }
 
 
-sleep(int ticks){
-	for(int counter = 0; counter <= ticks; counter++){
+sleep(double ticks){
 	double h = 0;
-	for(double i =0 ; i<100000; i++){
+	for(double i =0 ; i<100000*ticks; i++){
 		h = i*i*i;
-	}
 	}
 }
 
