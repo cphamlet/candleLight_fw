@@ -1,0 +1,10 @@
+#the result of ip -details link show can0
+
+35: can0: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 10
+    link/can  promiscuity 0 
+    can state ERROR-ACTIVE restart-ms 0 
+	  bitrate 500000 sample-point 0.875 
+	  tq 125 prop-seg 6 phase-seg1 7 phase-seg2 2 sjw 1
+	  gs_usb: tseg1 1..16 tseg2 1..8 sjw 1..4 brp 1..1024 brp-inc 1
+	  clock 48000000
+
