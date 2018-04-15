@@ -90,11 +90,19 @@ int main(void)
 		queue_push_back(q_frame_pool, &msgbuf[i]);
 	}
 
-	USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
-	USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
-	USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
-	USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
-	USBD_Start(&hUSB);
+	// USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
+	// USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
+	// USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
+	// USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
+	// USBD_Start(&hUSB);
+
+	can_enable(&hCAN,0,0,0);
+	
+	if(can_is_enabled(&hCAN)){
+		while(1){
+			
+		}
+	}
 
 #ifdef CAN_S_GPIO_Port
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
