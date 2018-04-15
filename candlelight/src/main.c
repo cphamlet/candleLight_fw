@@ -107,16 +107,16 @@ int main(void)
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
 #endif
 
-// struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
-// 		frame->can_id = 0;
-// 		frame->can_dlc = 8;
-// 		for(int ty = 0; ty<8; ty++ ){
-// 			frame->data[ty] = 0x00;
-// 		}
+struct gs_host_frame *frame = calloc(1, sizeof(struct gs_host_frame));
+		frame->can_id = 0;
+		frame->can_dlc = 8;
+		for(int ty = 0; ty<8; ty++ ){
+			frame->data[ty] = 0x00;
+		}
 
 	while (1) {
 		
-		struct gs_host_frame *frame = queue_pop_front(q_from_host);
+	//	struct gs_host_frame *frame = queue_pop_front(q_from_host);
 	    
 		led_set_mode(&hLED, led_mode_blue);	
 		sleep(1);
