@@ -100,7 +100,7 @@ int main(void)
 	
 	if(can_is_enabled(&hCAN)){
 		while(1){
-			
+			led_set_mode(&hLED, led_mode_normal);	
 		}
 	}
 
