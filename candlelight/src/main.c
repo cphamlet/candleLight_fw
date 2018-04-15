@@ -46,7 +46,7 @@ void HAL_MspInit(void);
 void SystemClock_Config(void);
 static bool send_to_host_or_enqueue(struct gs_host_frame *frame);
 static void send_to_host();
-
+static void sleep(double num);
 can_data_t hCAN;
 USBD_HandleTypeDef hUSB;
 led_data_t hLED;
@@ -99,6 +99,7 @@ int main(void)
 	can_enable(&hCAN,0,0,0);
 	
 	if(can_is_enabled(&hCAN)){
+		sleep(1);
 		while(1){
 			led_set_mode(&hLED, led_mode_normal);	
 		}
@@ -250,3 +251,9 @@ void send_to_host()
 	}
 }
 
+sleep(double ticks){
+	double h = 0;
+	for(double i =0 ; i<100000*ticks; i++){
+		h = i*i*i;
+	}
+}
