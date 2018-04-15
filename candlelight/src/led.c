@@ -149,7 +149,17 @@ void led_update(led_data_t *leds)
 		case led_mode_sequence:
 			led_update_sequence(leds);
 			break;
-
+		case led_mode_blue:
+			led_set(&leds->led_state[0], false);
+			led_set(&leds->led_state[1], true);
+			break;
+		case led_mode_green:
+			led_set(&leds->led_state[0], true);
+			led_set(&leds->led_state[1], false);
+			break;
+		case led_mode_both:
+			led_set(&leds->led_state[0], true);
+			led_set(&leds->led_state[1], true);
 		default:
 			led_set(&leds->led_state[0], false);
 			led_set(&leds->led_state[1], true);

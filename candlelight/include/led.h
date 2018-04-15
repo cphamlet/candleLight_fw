@@ -34,7 +34,10 @@ typedef enum {
 	led_mode_normal,
 	led_mode_warn,
 	led_mode_error,
-	led_mode_sequence
+	led_mode_sequence,
+	led_mode_blue,
+	led_mode_green,
+	led_mode_both
 } led_mode_t;
 
 typedef enum {
