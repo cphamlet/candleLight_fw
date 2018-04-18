@@ -39,7 +39,7 @@ void can_init(can_data_t *hcan, CAN_TypeDef *instance)
 	HAL_GPIO_Init(GPIOB, &itd);
 
 	hcan->instance   = instance;
-	hcan->brp        = 6;
+	hcan->brp        = 4;
 	hcan->phase_seg1 = 13;
 	hcan->phase_seg2 = 2;
 	hcan->sjw        = 1;
