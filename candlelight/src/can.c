@@ -40,8 +40,8 @@ void can_init(can_data_t *hcan, CAN_TypeDef *instance)
 
 	hcan->instance   = instance;
 	hcan->brp        = 4;
-	hcan->phase_seg1 = 13;
-	hcan->phase_seg2 = 2;
+	hcan->phase_seg1 = 6;
+	hcan->phase_seg2 = 4;
 	hcan->sjw        = 1;
 }
 
