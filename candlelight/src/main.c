@@ -78,7 +78,7 @@ int main(void)
 	timer_init();
 
 	can_init(&hCAN, CAN);
-	can_disable(&hCAN);
+	//can_disable(&hCAN);
 
 
 	q_frame_pool = queue_create(CAN_QUEUE_SIZE);
@@ -89,12 +89,13 @@ int main(void)
 	for (unsigned i=0; i<CAN_QUEUE_SIZE; i++) {
 		queue_push_back(q_frame_pool, &msgbuf[i]);
 	}
-
-	USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
-	USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
-	USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
-	USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
-	USBD_Start(&hUSB);
+	can_enable(&hCAN, 0,0,0);
+	led_set_mode(&hLED, led_mode_normal);
+	// USBD_Init(&hUSB, &FS_Desc, DEVICE_FS);
+	// USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
+	// USBD_GS_CAN_Init(&hUSB, q_frame_pool, q_from_host, &hLED);
+	// USBD_GS_CAN_SetChannel(&hUSB, 0, &hCAN);
+	// USBD_Start(&hUSB);
 
 #ifdef CAN_S_GPIO_Port
 	HAL_GPIO_WritePin(CAN_S_GPIO_Port, CAN_S_Pin, GPIO_PIN_RESET);
@@ -106,7 +107,7 @@ int main(void)
 			if (can_send(&hCAN, frame)) {
 			        // Echo sent frame back to host
 			        frame->timestamp_us = timer_get();
-				send_to_host_or_enqueue(frame);
+		//		send_to_host_or_enqueue(frame);
 				
 				led_indicate_trx(&hLED, led_2);
 			} else {
@@ -114,9 +115,9 @@ int main(void)
 			}
 		}
 
-		if (USBD_GS_CAN_TxReady(&hUSB)) {
-			send_to_host();
-		}
+		// if (USBD_GS_CAN_TxReady(&hUSB)) {
+		// 	send_to_host();
+		// }
 
 		if (can_is_rx_pending(&hCAN)) {
 			struct gs_host_frame *frame = queue_pop_front(q_frame_pool);
@@ -156,9 +157,9 @@ int main(void)
 
 		led_update(&hLED);
 
-		if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
-			dfu_run_bootloader();
-		}
+		// if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
+		// 	dfu_run_bootloader();
+		// }
 
 	}
 }
